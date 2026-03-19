@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HMG Operations Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy: #0f1f38;
+    --navy-mid: #1a3050;
+    --orange: #e8622a;
+    --orange-light: #f0845a;
+    --cream: #f7f3ee;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5ddd5;
+    --green: #16a34a;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--orange);
+  }
+
+  .logo { font-family: 'DM Serif Display', serif; color: white; font-size: 22px; letter-spacing: 0.5px; }
+  .logo span { color: var(--orange); }
+  .timestamp { font-family: 'DM Mono', monospace; color: #94a3b8; font-size: 12px; }
+
+  .main { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
+
+  .status-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+  }
+
+  .stat-card.orange { border-top-color: var(--orange); }
+  .stat-card.green { border-top-color: var(--green); }
+  .stat-card.amber { border-top-color: var(--amber); }
+
+  .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--navy); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 6px; font-weight: 500; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+  .panel {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--navy);
+  }
+
+  .panel-title { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; color: white; }
+  .panel-sub { font-size: 12px; color: #94a3b8; font-family: 'DM Mono', monospace; }
+
+  .panel-body { padding: 20px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid #f3f0eb; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #faf8f5; }
+
+  .last-action { color: var(--muted); font-size: 12px; max-width: 300px; }
+
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-active { background: #dbeafe; color: #1d4ed8; }
+  .badge-pending { background: #fef3c7; color: #92400e; }
+  .badge-complete { background: #dcfce7; color: #15803d; }
+
+  .connectors { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+  .connector { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid var(--border); }
+  .conn-connected { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+  .conn-pending { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .conn-unknown { background: #f8fafc; color: var(--muted); }
+  .conn-icon { font-family: 'DM Mono', monospace; font-weight: 600; width: 20px; text-align: center; }
+
+  .prospect-card {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .prospect-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .prospect-meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .prospect-stage { font-size: 11px; background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 6px; font-weight: 500; }
+  .prospect-next { font-size: 12px; color: var(--muted); font-style: italic; }
+
+  .log-entry {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .log-entry:last-child { border-bottom: none; }
+  .log-title { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--orange); font-weight: 500; margin-bottom: 6px; }
+  .log-body { font-size: 13px; color: var(--muted); line-height: 1.5; white-space: pre-wrap; }
+
+  .ralph-card {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--orange);
+  }
+  .ralph-name { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  .ralph-cmd { font-size: 11px; color: var(--muted); background: #f8f5f1; padding: 4px 8px; border-radius: 4px; display: block; font-family: 'DM Mono', monospace; }
+
+  .empty-state { color: var(--muted); font-size: 13px; font-style: italic; padding: 10px 0; }
+
+  footer { text-align: center; padding: 24px; color: var(--muted); font-size: 12px; font-family: 'DM Mono', monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">HILLTOP <span>MANAGEMENT</span> GROUP</div>
+  <div class="timestamp">Dashboard generated March 18, 2026 at 09:09 PM</div>
+</header>
+
+<div class="main">
+
+  <div class="status-bar">
+    <div class="stat-card">
+      <div class="stat-value">11</div>
+      <div class="stat-label">Total Projects Tracked</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-value">10</div>
+      <div class="stat-label">Projects Passing</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-value">1</div>
+      <div class="stat-label">Open Items</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-value">0</div>
+      <div class="stat-label">Pipeline Prospects</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Project Status</div>
+        <div class="panel-sub">10/11 passing</div>
+      </div>
+      <table>
+        <thead><tr><th></th><th>ID</th><th>Name</th><th>Status</th><th>Last Action</th></tr></thead>
+        <tbody>
+        <tr>
+            <td>🟢</td>
+            <td>GTM-001</td>
+            <td>Sponsor Deck — 21-slide definitive version</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Deck revised 2026-03-18 — yield updated to 3.93%, fee model added (10bps/50bps),...</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>GTM-002</td>
+            <td>Executive Summary — one-pager</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Net economics table updated 2026-03-18 to match definitive fee model — throughpu...</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>GTM-003</td>
+            <td>Quiet Bleed Calculator</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Calculator saved to repo 2026-03-18. Fee model standardized to definitive formul...</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>GTM-004</td>
+            <td>Conference scripts — keynote (primary) + floor script (secondary)</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Keynote approved. Floor script cut as GTM-006. Both passing.</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>GTM-006</td>
+            <td>Conference Floor Script — short version</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Floor script drafted and QA checked 2026-03-18. 539 words. All 13 criteria pass....</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>GTM-005</td>
+            <td>Deck-to-ExecSummary Reconciliation</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Completed 2026-03-18 — deck revised and QA passed. GTM-001 now passes: true.</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>PART-001</td>
+            <td>RIA Partner — Established</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Relationship established. Partner unnamed by design.</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>AI-001</td>
+            <td>HMG Operations Harness — initial setup</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Harness committed to graychar2425-blip/hmg-operations on GitHub — 2026-03-18.</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>AI-002</td>
+            <td>GitHub MCP Integration</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">GitHub MCP server connected and verified via claude mcp list — 2026-03-18.</td>
+        </tr>
+        <tr>
+            <td>🟢</td>
+            <td>AI-003</td>
+            <td>Dispatch Connectors — Google Drive + Outlook</td>
+            <td><span class="badge badge-active">active</span></td>
+            <td class="last-action">Google Drive connected in Cowork 2026-03-18. Outlook pending setup.</td>
+        </tr>
+        <tr>
+            <td>🔴</td>
+            <td>PIPE-001</td>
+            <td>Active sponsor prospects</td>
+            <td><span class="badge badge-pending">pending</span></td>
+            <td class="last-action">Pipeline not yet formalized in harness.</td>
+        </tr></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Connectors</div>
+        <div class="panel-sub">tools.md</div>
+      </div>
+      <div class="connectors"><div class="connector conn-connected"><span class="conn-icon">✓</span>GitHub</div><div class="connector conn-pending"><span class="conn-icon">?</span>Gmail</div><div class="connector conn-connected"><span class="conn-icon">✓</span>Google Drive</div><div class="connector conn-pending"><span class="conn-icon">○</span>Google Calendar</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Sponsor Pipeline</div>
+        <div class="panel-sub">active-pipeline.json</div>
+      </div>
+      <div class="panel-body"><div class="empty-state">No prospects yet. Add your first record to active-pipeline.json.</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Session Log</div>
+        <div class="panel-sub">hmg-progress.md</div>
+      </div>
+      <div class="panel-body">
+        <div class="log-entry">
+            <div class="log-title">2026-03-18 — GitHub Setup Complete + Harness Live</div>
+            <div class="log-body">**What was done:** Created graychar2425-blip/hmg-operations private GitHub repo, pushed all harness files (27 files, initial commit). GitHub MCP server added to Claude Code and verified connected via ...</div>
+        </div>
+        <div class="log-entry">
+            <div class="log-title">2026-03-18 — Dashboard Generator Built</div>
+            <div class="log-body">**What was done:** Built scripts/generate-dashboard.py — a Python script that reads live repo data (active-projects.json, active-pipeline.json, tools.md, hmg-progress.md) and produces outputs/dashboar...</div>
+        </div>
+        <div class="log-entry">
+            <div class="log-title">2026-03-18 — All Six Harness Gaps Closed</div>
+            <div class="log-body">**What was done:** Built all remaining harness files to close the six identified gaps. Gap 1: startup.md with defined startup/shutdown sequence. Gap 2: hmg-context/tools.md connector inventory. Gap 3:...</div>
+        </div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Ralph Loop Prompts</div>
+      <div class="panel-sub">ralph-prompts/ — invoke via Dispatch</div>
+    </div>
+    <div class="panel-body" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div class="ralph-card">
+            <div class="ralph-name">Sponsor Meeting Prep</div>
+            <code class="ralph-cmd">Dispatch: "Run sponsor meeting prep"</code>
+        </div>
+        <div class="ralph-card">
+            <div class="ralph-name">Pipeline Update</div>
+            <code class="ralph-cmd">Dispatch: "Run pipeline update"</code>
+        </div>
+        <div class="ralph-card">
+            <div class="ralph-name">Outreach Batch</div>
+            <code class="ralph-cmd">Dispatch: "Run outreach batch"</code>
+        </div>
+        <div class="ralph-card">
+            <div class="ralph-name">Weekly Ops Review</div>
+            <code class="ralph-cmd">Dispatch: "Run weekly ops review"</code>
+        </div>
+        <div class="ralph-card">
+            <div class="ralph-name">Status Update</div>
+            <code class="ralph-cmd">Dispatch: "Run status update"</code>
+        </div></div>
+  </div>
+
+</div>
+
+<footer>HMG Operations Harness · Generated from live repo data · March 18, 2026 at 09:09 PM</footer>
+
+</body>
+</html>
