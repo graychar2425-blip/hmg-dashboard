@@ -1,337 +1,1476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HMG Operations Dashboard</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMG Operations Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  :root {
-    --navy: #0f1f38;
-    --navy-mid: #1a3050;
-    --orange: #e8622a;
-    --orange-light: #f0845a;
-    --cream: #f7f3ee;
-    --text: #1a1a2e;
-    --muted: #6b7280;
-    --border: #e5ddd5;
-    --green: #16a34a;
-    --red: #dc2626;
-    --amber: #d97706;
-  }
+        :root {
+            --navy: #1E2761;
+            --white: #ffffff;
+            --orange: #E8832A;
+            --light-gray: #f5f5f5;
+            --dark-gray: #666666;
+            --border-gray: #e0e0e0;
+            --cold: #9e9e9e;
+            --warm: #2196F3;
+            --meeting: #E8832A;
+            --proposal: #4CAF50;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-  }
+        /* HEADER & NAV */
+        header {
+            background-color: var(--navy);
+            color: var(--white);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
 
-  header {
-    background: var(--navy);
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid var(--orange);
-  }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
 
-  .logo { font-family: 'DM Serif Display', serif; color: white; font-size: 22px; letter-spacing: 0.5px; }
-  .logo span { color: var(--orange); }
-  .timestamp { font-family: 'DM Mono', monospace; color: #94a3b8; font-size: 12px; }
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
 
-  .main { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
+        .logo-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
 
-  .status-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 32px;
-  }
+        .last-updated {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            white-space: nowrap;
+        }
 
-  .stat-card {
-    background: white;
-    border-radius: 8px;
-    padding: 20px 24px;
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--navy);
-  }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+            flex-wrap: wrap;
+        }
 
-  .stat-card.orange { border-top-color: var(--orange); }
-  .stat-card.green { border-top-color: var(--green); }
-  .stat-card.amber { border-top-color: var(--amber); }
+        .tab-btn {
+            padding: 0.6rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
 
-  .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--navy); line-height: 1; }
-  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 6px; font-weight: 500; }
+        .tab-btn:hover {
+            opacity: 1;
+        }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .tab-btn.active {
+            opacity: 1;
+            border-bottom-color: var(--orange);
+        }
 
-  .panel {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
+        /* MAIN CONTENT */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
 
-  .panel-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--navy);
-  }
+        .tab-content {
+            display: none;
+        }
 
-  .panel-title { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; color: white; }
-  .panel-sub { font-size: 12px; color: #94a3b8; font-family: 'DM Mono', monospace; }
+        .tab-content.active {
+            display: block;
+        }
 
-  .panel-body { padding: 20px; }
+        /* SECTION TITLES */
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--navy);
+        }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 600; }
-  td { padding: 10px 12px; border-bottom: 1px solid #f3f0eb; vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #faf8f5; }
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--navy);
+            margin-top: 2rem;
+        }
 
-  .last-action { color: var(--muted); font-size: 12px; max-width: 300px; }
+        /* SEARCH & FILTERS */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
 
-  .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
-  .badge-active { background: #dbeafe; color: #1d4ed8; }
-  .badge-pending { background: #fef3c7; color: #92400e; }
-  .badge-complete { background: #dcfce7; color: #15803d; }
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
 
-  .connectors { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
-  .connector { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid var(--border); }
-  .conn-connected { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
-  .conn-pending { background: #fffbeb; border-color: #fde68a; color: #92400e; }
-  .conn-unknown { background: #f8fafc; color: var(--muted); }
-  .conn-icon { font-family: 'DM Mono', monospace; font-weight: 600; width: 20px; text-align: center; }
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            background-color: var(--white);
+            cursor: pointer;
+        }
 
-  .prospect-card {
-    padding: 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-bottom: 10px;
-  }
-  .prospect-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-  .prospect-meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .prospect-stage { font-size: 11px; background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 6px; font-weight: 500; }
-  .prospect-next { font-size: 12px; color: var(--muted); font-style: italic; }
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
 
-  .log-entry {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .log-entry:last-child { border-bottom: none; }
-  .log-title { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--orange); font-weight: 500; margin-bottom: 6px; }
-  .log-body { font-size: 13px; color: var(--muted); line-height: 1.5; white-space: pre-wrap; }
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--orange);
+        }
 
-  .ralph-card {
-    padding: 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-bottom: 10px;
-    border-left: 3px solid var(--orange);
-  }
-  .ralph-name { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
-  .ralph-cmd { font-size: 11px; color: var(--muted); background: #f8f5f1; padding: 4px 8px; border-radius: 4px; display: block; font-family: 'DM Mono', monospace; }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
 
-  .empty-state { color: var(--muted); font-size: 13px; font-style: italic; padding: 10px 0; }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
 
-  footer { text-align: center; padding: 24px; color: var(--muted); font-size: 12px; font-family: 'DM Mono', monospace; }
-</style>
+        .stat-subvalue {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            margin-top: 0.5rem;
+        }
+
+        /* TABLES */
+        .table-wrapper {
+            background: var(--white);
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f5f5f5;
+            border-bottom: 2px solid var(--border-gray);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-gray);
+            font-size: 0.95rem;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #fafafa;
+        }
+
+        /* EXPANDABLE ROWS */
+        .expand-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--orange);
+            font-size: 1.25rem;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-btn.open {
+            transform: rotate(180deg);
+        }
+
+        .expanded-content {
+            display: none;
+            background: #fafafa;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .expanded-content.open {
+            display: block;
+        }
+
+        .expanded-row {
+            display: none;
+        }
+
+        .expanded-row.open {
+            display: table-row;
+        }
+
+        /* STAGE BADGES */
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-cold {
+            background-color: #e0e0e0;
+            color: #555;
+        }
+
+        .badge-warm {
+            background-color: #e3f2fd;
+            color: var(--warm);
+        }
+
+        .badge-meeting {
+            background-color: #fff3e0;
+            color: var(--meeting);
+        }
+
+        .badge-proposal {
+            background-color: #e8f5e9;
+            color: var(--proposal);
+        }
+
+        /* PRIORITY INDICATORS */
+        .priority-high {
+            color: #d32f2f;
+            font-weight: 600;
+        }
+
+        .priority-medium {
+            color: var(--orange);
+            font-weight: 600;
+        }
+
+        /* EXPANDED DETAILS */
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-section h3 {
+            font-size: 1rem;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .detail-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .detail-label {
+            color: var(--dark-gray);
+            min-width: 120px;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        /* EMAIL & COPY BUTTONS */
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #d67620;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(232, 131, 42, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--navy);
+            border: 2px solid var(--navy);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--navy);
+            color: var(--white);
+        }
+
+        .btn-copy {
+            background-color: #4CAF50;
+            color: var(--white);
+        }
+
+        .btn-copy:hover {
+            background-color: #388E3C;
+        }
+
+        .btn-copy.copied {
+            background-color: #1B5E20;
+        }
+
+        /* QUIET BLEED DISPLAY */
+        .bleed-highlight {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 4px solid var(--orange);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .bleed-label {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .bleed-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .bleed-subtext {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            margin-top: 0.5rem;
+        }
+
+        /* EMAIL DISPLAY */
+        .email-box {
+            background: #f5f5f5;
+            padding: 1.25rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin: 1rem 0;
+            border-left: 3px solid var(--orange);
+        }
+
+        .email-subject {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .email-body {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #333;
+        }
+
+        /* DELIVERABLES */
+        .deliverables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .deliverable-card {
+            background: var(--white);
+            padding: 1.25rem;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            border-top: 3px solid var(--orange);
+        }
+
+        .deliverable-card h3 {
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .deliverable-card p {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+        }
+
+        .deliverable-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--orange);
+            text-decoration: none;
+            font-weight: 600;
+            transition: gap 0.2s ease;
+        }
+
+        .deliverable-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* STATUS INDICATORS */
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-pass {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-fail {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .status-pending {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        /* LAW FIRMS */
+        .law-firm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .law-firm-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--border-gray);
+            transition: all 0.3s ease;
+        }
+
+        .law-firm-card.battle-ready {
+            border-left-color: #4CAF50;
+            background: linear-gradient(to right, rgba(76, 175, 80, 0.05), transparent);
+        }
+
+        .law-firm-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .firm-name {
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .partner-name {
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .partner-title {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .partner-email {
+            font-size: 0.9rem;
+            color: var(--orange);
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+
+        .firm-location {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .battle-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: var(--white);
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .tabs {
+                margin-top: 1rem;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box,
+            .filter-select {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .expanded-content {
+                padding: 1rem;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .law-firm-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .deliverables-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* UTILITY */
+        .hidden {
+            display: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-2 {
+            margin-top: 1.5rem;
+        }
+    </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">HILLTOP <span>MANAGEMENT</span> GROUP</div>
-  <div class="timestamp">Dashboard generated March 18, 2026 at 09:14 PM</div>
-</header>
-
-<div class="main">
-
-  <div class="status-bar">
-    <div class="stat-card">
-      <div class="stat-value">11</div>
-      <div class="stat-label">Total Projects Tracked</div>
-    </div>
-    <div class="stat-card green">
-      <div class="stat-value">10</div>
-      <div class="stat-label">Projects Passing</div>
-    </div>
-    <div class="stat-card orange">
-      <div class="stat-value">1</div>
-      <div class="stat-label">Open Items</div>
-    </div>
-    <div class="stat-card amber">
-      <div class="stat-value">0</div>
-      <div class="stat-label">Pipeline Prospects</div>
-    </div>
-  </div>
-
-  <div class="grid-3">
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Project Status</div>
-        <div class="panel-sub">10/11 passing</div>
-      </div>
-      <table>
-        <thead><tr><th></th><th>ID</th><th>Name</th><th>Status</th><th>Last Action</th></tr></thead>
-        <tbody>
-        <tr>
-            <td>🟢</td>
-            <td>GTM-001</td>
-            <td>Sponsor Deck — 21-slide definitive version</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Deck revised 2026-03-18 — yield updated to 3.93%, fee model added (10bps/50bps),...</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>GTM-002</td>
-            <td>Executive Summary — one-pager</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Net economics table updated 2026-03-18 to match definitive fee model — throughpu...</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>GTM-003</td>
-            <td>Quiet Bleed Calculator</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Calculator saved to repo 2026-03-18. Fee model standardized to definitive formul...</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>GTM-004</td>
-            <td>Conference scripts — keynote (primary) + floor script (secondary)</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Keynote approved. Floor script cut as GTM-006. Both passing.</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>GTM-006</td>
-            <td>Conference Floor Script — short version</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Floor script drafted and QA checked 2026-03-18. 539 words. All 13 criteria pass....</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>GTM-005</td>
-            <td>Deck-to-ExecSummary Reconciliation</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Completed 2026-03-18 — deck revised and QA passed. GTM-001 now passes: true.</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>PART-001</td>
-            <td>RIA Partner — Established</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Relationship established. Partner unnamed by design.</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>AI-001</td>
-            <td>HMG Operations Harness — initial setup</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Harness committed to graychar2425-blip/hmg-operations on GitHub — 2026-03-18.</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>AI-002</td>
-            <td>GitHub MCP Integration</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">GitHub MCP server connected and verified via claude mcp list — 2026-03-18.</td>
-        </tr>
-        <tr>
-            <td>🟢</td>
-            <td>AI-003</td>
-            <td>Dispatch Connectors — Google Drive + Outlook</td>
-            <td><span class="badge badge-active">active</span></td>
-            <td class="last-action">Google Drive connected in Cowork 2026-03-18. Outlook pending setup.</td>
-        </tr>
-        <tr>
-            <td>🔴</td>
-            <td>PIPE-001</td>
-            <td>Active sponsor prospects</td>
-            <td><span class="badge badge-pending">pending</span></td>
-            <td class="last-action">Pipeline not yet formalized in harness.</td>
-        </tr></tbody>
-      </table>
-    </div>
-
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Connectors</div>
-        <div class="panel-sub">tools.md</div>
-      </div>
-      <div class="connectors"><div class="connector conn-connected"><span class="conn-icon">✓</span>GitHub</div><div class="connector conn-pending"><span class="conn-icon">?</span>Gmail</div><div class="connector conn-connected"><span class="conn-icon">✓</span>Google Drive</div><div class="connector conn-pending"><span class="conn-icon">○</span>Google Calendar</div></div>
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Sponsor Pipeline</div>
-        <div class="panel-sub">active-pipeline.json</div>
-      </div>
-      <div class="panel-body"><div class="empty-state">No prospects yet. Add your first record to active-pipeline.json.</div></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Session Log</div>
-        <div class="panel-sub">hmg-progress.md</div>
-      </div>
-      <div class="panel-body">
-        <div class="log-entry">
-            <div class="log-title">2026-03-18 — GitHub Setup Complete + Harness Live</div>
-            <div class="log-body">**What was done:** Created graychar2425-blip/hmg-operations private GitHub repo, pushed all harness files (27 files, initial commit). GitHub MCP server added to Claude Code and verified connected via ...</div>
+    <header>
+        <div class="header-content">
+            <div>
+                <div class="logo">HMG Operations</div>
+                <div class="logo-subtitle">Hilltop Management Group</div>
+            </div>
+            <div class="last-updated">Last updated: March 19, 2026</div>
         </div>
-        <div class="log-entry">
-            <div class="log-title">2026-03-18 — Dashboard Generator Built</div>
-            <div class="log-body">**What was done:** Built scripts/generate-dashboard.py — a Python script that reads live repo data (active-projects.json, active-pipeline.json, tools.md, hmg-progress.md) and produces outputs/dashboar...</div>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="pipeline">Pipeline</button>
+            <button class="tab-btn" data-tab="deliverables">Deliverables</button>
+            <button class="tab-btn" data-tab="status">Status</button>
+            <button class="tab-btn" data-tab="law-firms">Law Firms</button>
         </div>
-        <div class="log-entry">
-            <div class="log-title">2026-03-18 — All Six Harness Gaps Closed</div>
-            <div class="log-body">**What was done:** Built all remaining harness files to close the six identified gaps. Gap 1: startup.md with defined startup/shutdown sequence. Gap 2: hmg-context/tools.md connector inventory. Gap 3:...</div>
-        </div></div>
+    </header>
+
+    <div class="container">
+        <!-- PIPELINE TAB -->
+        <div id="pipeline" class="tab-content active">
+            <h1>Prospect Pipeline</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Prospects</div>
+                    <div class="stat-value" id="stat-total">54</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total AUM</div>
+                    <div class="stat-value" id="stat-aum">-</div>
+                    <div class="stat-subvalue" id="stat-aum-sub">Across all prospects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Idle Capital</div>
+                    <div class="stat-value" id="stat-idle">-</div>
+                    <div class="stat-subvalue" id="stat-idle-sub">20% of AUM</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Annual Bleed</div>
+                    <div class="stat-value" id="stat-bleed">-</div>
+                    <div class="stat-subvalue" id="stat-bleed-sub">Cost of inaction across portfolio</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <input type="text" class="search-box" id="search-input" placeholder="Search by firm, contact, email...">
+                <select class="filter-select" id="priority-filter">
+                    <option value="">All Priorities</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                </select>
+                <select class="filter-select" id="stage-filter">
+                    <option value="">All Stages</option>
+                    <option value="cold">Cold</option>
+                    <option value="warm">Warm</option>
+                    <option value="meeting">Meeting</option>
+                    <option value="proposal">Proposal</option>
+                </select>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="prospects-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"></th>
+                            <th>Firm</th>
+                            <th>Contact</th>
+                            <th>AUM</th>
+                            <th>Stage</th>
+                            <th>Priority</th>
+                            <th style="width: 100px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prospects-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DELIVERABLES TAB -->
+        <div id="deliverables" class="tab-content">
+            <h1>Deliverables & Resources</h1>
+
+            <h2>Quiet Bleed Reports</h2>
+            <div class="deliverables-grid">
+                <div class="deliverable-card">
+                    <h3>Align Capital Partners Report</h3>
+                    <p>Comprehensive quiet bleed analysis for Align Capital Partners. Fund II at $450M hard cap.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-align-capital-partners.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Eastham Capital Report</h3>
+                    <p>Detailed quiet bleed analysis for Eastham Capital. Fund VII targeting $500-750M.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-eastham-capital.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Gauge Capital Report</h3>
+                    <p>Quiet bleed analysis for Gauge Capital with $3.4B AUM across diverse sectors.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-gauge-capital.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>LLR Partners Report</h3>
+                    <p>Comprehensive analysis for LLR Partners, a major growth equity platform with $7.5B+ AUM.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-llr-partners.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>MiddleGround Capital Report</h3>
+                    <p>Analysis for MiddleGround Capital showing rapid growth to $4.1B AUM since 2018.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-middleground-capital.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Pearlmark Real Estate Report</h3>
+                    <p>Quiet bleed analysis for Pearlmark Real Estate with $6B+ equity commitments.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-pearlmark-real-estate.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Plexus Capital Report</h3>
+                    <p>Detailed analysis for Plexus Capital, a 45-person institutional platform with $2.2B+ AUM.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-plexus-capital.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Shore Capital Partners Report</h3>
+                    <p>Comprehensive analysis for Shore Capital Partners, showing explosive growth to $14B+ AUM.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-shore-capital-partners.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>ShoreView Industries Report</h3>
+                    <p>Analysis for ShoreView Industries with four funds and $1.3B committed capital.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-shoreview-industries.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Wynnchurch Capital Report</h3>
+                    <p>Detailed quiet bleed analysis for Wynnchurch Capital with $9.2B regulatory AUM.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/quiet-bleed-reports/quiet-bleed-report-wynnchurch-capital.pdf" class="deliverable-link" target="_blank">View Report →</a>
+                </div>
+            </div>
+
+            <h2>Foley & Lardner Battle Plan</h2>
+            <div class="deliverables-grid">
+                <div class="deliverable-card">
+                    <h3>Battle Plan Document</h3>
+                    <p>Complete go-to-market strategy for Foley & Lardner partnership.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/foley-battle-plan.md" class="deliverable-link" target="_blank">View Document →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Intro Email</h3>
+                    <p>Personalized outreach email for Foley & Lardner fund formation partners.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/foley-intro-email.md" class="deliverable-link" target="_blank">View Email →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Pitch Insert</h3>
+                    <p>Visual pitch document insert for Foley presentations.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/foley-pitch-insert.pdf" class="deliverable-link" target="_blank">View PDF →</a>
+                </div>
+            </div>
+
+            <h2>Competitive Intelligence</h2>
+            <div class="deliverables-grid">
+                <div class="deliverable-card">
+                    <h3>Competitive Battlecards (PDF)</h3>
+                    <p>Visual competitive analysis and key talking points.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/competitive-battlecards.pdf" class="deliverable-link" target="_blank">View PDF →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Competitive Battlecards (Markdown)</h3>
+                    <p>Detailed competitive battlecard document with full notes.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/competitive-battlecards.md" class="deliverable-link" target="_blank">View Document →</a>
+                </div>
+            </div>
+
+            <h2>Outreach Sequences</h2>
+            <div class="deliverables-grid">
+                <div class="deliverable-card">
+                    <h3>Form D Sequence</h3>
+                    <p>Multi-touch outreach sequence for Form D filers.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/outreach-form-d-sequence.md" class="deliverable-link" target="_blank">View Sequence →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Sponsor Cold Sequence</h3>
+                    <p>Cold outreach cadence for PE sponsors and real estate investors.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/outreach-sponsor-cold-sequence.md" class="deliverable-link" target="_blank">View Sequence →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Law Firm Partnership One-Pager</h3>
+                    <p>Partnership summary document for fund formation law firms.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/outputs/hmg-law-firm-partnership-one-pager.docx" class="deliverable-link" target="_blank">View Document →</a>
+                </div>
+                <div class="deliverable-card">
+                    <h3>Prospect List (Excel)</h3>
+                    <p>Comprehensive Excel prospect list with all 54 prospects and contact information.</p>
+                    <a href="https://raw.githubusercontent.com/graychar2425-blip/hmg-operations/main/assets/pipeline/prospect-list.xlsx" class="deliverable-link" target="_blank">Download Excel →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS TAB -->
+        <div id="status" class="tab-content">
+            <h1>Initiative Status</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Initiatives Passing</div>
+                    <div class="stat-value" id="stat-pass">10</div>
+                    <div class="stat-subvalue">of 11 total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Initiatives Failing</div>
+                    <div class="stat-value" id="stat-fail">1</div>
+                    <div class="stat-subvalue">Pipeline formalization in progress</div>
+                </div>
+            </div>
+
+            <h2>GTM Initiatives</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GTM-001</td>
+                            <td>Sponsor Deck</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Pitch deck for PE sponsors finalized</td>
+                        </tr>
+                        <tr>
+                            <td>GTM-002</td>
+                            <td>Executive Summary</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>1-page exec summary for cold outreach</td>
+                        </tr>
+                        <tr>
+                            <td>GTM-003</td>
+                            <td>Quiet Bleed Calculator</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Interactive calculator for idle capital analysis</td>
+                        </tr>
+                        <tr>
+                            <td>GTM-004</td>
+                            <td>Conference Scripts</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>30-sec, 2-min, 5-min elevator pitches</td>
+                        </tr>
+                        <tr>
+                            <td>GTM-005</td>
+                            <td>Deck Reconciliation</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Consistency audit across all sales materials</td>
+                        </tr>
+                        <tr>
+                            <td>GTM-006</td>
+                            <td>Floor Script</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Conference booth engagement script</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Partnership Initiatives</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PART-001</td>
+                            <td>RIA Partner Integration</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>SEC-registered advisor integration complete</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>AI & Operations Infrastructure</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AI-001</td>
+                            <td>Operations Harness</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>Claude AI operations framework deployed</td>
+                        </tr>
+                        <tr>
+                            <td>AI-002</td>
+                            <td>GitHub MCP</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td>GitHub Model Context Protocol connected</td>
+                        </tr>
+                        <tr>
+                            <td>AI-003</td>
+                            <td>Dispatch Connectors</td>
+                            <td><span class="status-badge status-pending">PENDING</span></td>
+                            <td>Google Drive ✅, GitHub ✅, Outlook ⏳</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Pipeline Management</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PIPE-001</td>
+                            <td>Active Prospects</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>Pipeline formalization in progress — 54 prospects identified, scoring and CRM integration ongoing</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Open Items</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Connector: Google Drive</td>
+                            <td><span class="status-badge status-pass">CONNECTED</span></td>
+                            <td>All document access operational</td>
+                        </tr>
+                        <tr>
+                            <td>Connector: GitHub MCP</td>
+                            <td><span class="status-badge status-pass">CONNECTED</span></td>
+                            <td>Repository sync and file operations working</td>
+                        </tr>
+                        <tr>
+                            <td>Connector: Outlook/Email</td>
+                            <td><span class="status-badge status-pending">PENDING</span></td>
+                            <td>Email dispatch sequence automation awaiting OAuth connection</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LAW FIRMS TAB -->
+        <div id="law-firms" class="tab-content">
+            <h1>Fund Formation Law Firms</h1>
+            <p style="margin-bottom: 1.5rem; color: var(--dark-gray);">Network of 24 premier fund formation law firms. Foley & Lardner partnership is battle-ready.</p>
+
+            <div class="law-firm-grid" id="law-firms-grid">
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="panel">
-    <div class="panel-header">
-      <div class="panel-title">Ralph Loop Prompts</div>
-      <div class="panel-sub">ralph-prompts/ — invoke via Dispatch</div>
-    </div>
-    <div class="panel-body" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-        <div class="ralph-card">
-            <div class="ralph-name">Sponsor Meeting Prep</div>
-            <code class="ralph-cmd">Dispatch: "Run sponsor meeting prep"</code>
-        </div>
-        <div class="ralph-card">
-            <div class="ralph-name">Pipeline Update</div>
-            <code class="ralph-cmd">Dispatch: "Run pipeline update"</code>
-        </div>
-        <div class="ralph-card">
-            <div class="ralph-name">Outreach Batch</div>
-            <code class="ralph-cmd">Dispatch: "Run outreach batch"</code>
-        </div>
-        <div class="ralph-card">
-            <div class="ralph-name">Weekly Ops Review</div>
-            <code class="ralph-cmd">Dispatch: "Run weekly ops review"</code>
-        </div>
-        <div class="ralph-card">
-            <div class="ralph-name">Status Update</div>
-            <code class="ralph-cmd">Dispatch: "Run status update"</code>
-        </div></div>
-  </div>
+    <script>
+        // PROSPECT DATA
+        const prospects = [
+            {id: '001', firm: 'Align Capital Partners', contact: 'Rob Langley', title: 'Co-Founder & Managing Partner', email: 'rlangley@aligncp.com', aum: 1800, strategy: 'Lower middle market PE buyout — business services, tech, specialty manufacturing', geography: 'Cleveland, OH / Dallas, TX', stage: 'cold', priority: 'high', notes: 'Fund II closed at $450M hard cap. Sweet spot HMG target.'},
+            {id: '002', firm: 'ShoreView Industries', contact: 'Jeffrey A. Mudge', title: 'Founder & Managing Partner', email: 'jmudge@shoreview.com', aum: 1300, strategy: 'Lower middle market PE — engineered products, distribution, industrial services, healthcare', geography: 'Minneapolis, MN', stage: 'cold', priority: 'high', notes: 'Four funds with $1.3B committed.'},
+            {id: '003', firm: 'NextGen Growth Partners', contact: 'Brian O\'Connor', title: 'Founder & Managing Partner', email: 'boconnor@nextgengp.com', aum: 165, strategy: 'Lower middle market PE — family/founder-owned businesses', geography: 'Chicago, IL', stage: 'cold', priority: 'medium', notes: 'Recently closed $165M+ Fund III.'},
+            {id: '004', firm: 'Plexus Capital', contact: 'Mike Becker', title: 'Partner', email: 'mbecker@plexuscap.com', aum: 2200, strategy: 'Lower middle market PE — equity and debt investments', geography: 'Raleigh / Charlotte, NC', stage: 'cold', priority: 'high', notes: '45-person institutional platform.'},
+            {id: '005', firm: 'LLR Partners', contact: 'David Stienes', title: 'Managing Partner', email: 'dstienes@llrpartners.com', aum: 7500, strategy: 'Growth equity — software, tech-enabled services, healthcare', geography: 'Philadelphia, PA', stage: 'cold', priority: 'high', notes: 'Major growth equity platform.'},
+            {id: '006', firm: 'Gauge Capital', contact: 'Tom McKelvey', title: 'Co-Founder & Managing Partner', email: 'tmckelvey@gaugecapital.com', aum: 3400, strategy: 'Middle market PE — business services, food & consumer, healthcare, technology', geography: 'Southlake (Dallas), TX', stage: 'cold', priority: 'high', notes: '$3.4B AUM with diverse sector coverage.'},
+            {id: '007', firm: 'Blue Sage Capital', contact: 'Peter Huff', title: 'Founder & Managing Partner', email: 'peter.huff@bluesage.com', aum: 1500, strategy: 'Lower middle market PE — environmental solutions, niche manufacturing', geography: 'Austin, TX', stage: 'cold', priority: 'medium', notes: 'Austin-based LMM firm with $1B+ AUM.'},
+            {id: '008', firm: 'Branford Castle Partners', contact: 'David Castle', title: 'Managing Partner', email: 'dac@branfordcastle.com', aum: 400, strategy: 'Lower middle market PE — companies under $200M revenue', geography: 'New York, NY', stage: 'cold', priority: 'medium', notes: 'Classic LMM sponsor with $400M committed.'},
+            {id: '009', firm: 'Wynnchurch Capital', contact: 'John Hatherly', title: 'Managing Partner', email: 'jhatherly@wynnchurch.com', aum: 9200, strategy: 'Middle market PE — recapitalizations, buyouts, carve-outs', geography: 'Rosemont (Chicago), IL', stage: 'cold', priority: 'high', notes: 'Fund VI closed at $3.5B.'},
+            {id: '010', firm: 'Svoboda Capital Partners', contact: 'Jim Svoboda', title: 'Founder & Managing Partner', email: 'jsvoboda@svoco.com', aum: 500, strategy: 'Middle market PE — business services, professional services', geography: 'Chicago, IL', stage: 'cold', priority: 'medium', notes: 'Chicago-based middle market firm with 5 funds.'},
+            {id: '011', firm: 'MiddleGround Capital', contact: 'John Stewart', title: 'Founder & Managing Partner', email: 'jstewart@middlegroundcapital.com', aum: 4100, strategy: 'Middle market PE — B2B industrial, specialty distribution', geography: 'Lexington, KY', stage: 'cold', priority: 'high', notes: 'Rapid growth from ~$0 to $4.1B AUM since 2018.'},
+            {id: '012', firm: 'Altair Industries', contact: 'David Waxman', title: 'Co-Founder & Managing Partner', email: 'dwaxman@altairindustries.com', aum: 550, strategy: 'Middle market PE — aerospace & defense', geography: 'New York, NY', stage: 'cold', priority: 'high', notes: 'Launched Oct 2025, seeking $550M for Fund I.'},
+            {id: '013', firm: 'Morgan Stanley Capital Partners', contact: 'Aaron Sack', title: 'Head of MSCP', email: 'aaron.sack@morganstanley.com', aum: 1400, strategy: 'Middle market PE — control equity, $200M-$800M EV', geography: 'New York, NY', stage: 'cold', priority: 'medium', notes: 'Fund VI with $1.4B commitments.'},
+            {id: '014', firm: 'The Bascom Group', contact: 'Jerry Fink', title: 'Co-Founder & Principal', email: 'jfink@bascomgroup.com', aum: 76, strategy: 'Real estate — value-add & distressed multifamily', geography: 'Irvine, CA', stage: 'cold', priority: 'high', notes: 'Major multifamily value-add sponsor.'},
+            {id: '015', firm: 'Broad Creek Capital', contact: 'Matthew Ruesch', title: 'Co-Founder & Managing Partner', email: 'mruesch@broadcreekcap.com', aum: 150, strategy: 'Real estate — value-add multifamily', geography: 'New York, NY', stage: 'cold', priority: 'high', notes: 'First close of $150M dedicated multifamily.'},
+            {id: '016', firm: 'Eastham Capital', contact: 'Matthew Rosenthal', title: 'Founder & Managing Director', email: 'matthew@easthamcapital.com', aum: 625, strategy: 'Real estate — value-add & distressed multifamily', geography: 'Boca Raton, FL', stage: 'cold', priority: 'high', notes: 'Fund VII targeting $500-750M.'},
+            {id: '017', firm: 'Matterhorn Venture Partners', contact: 'Scott McKibben', title: 'Co-Founder', email: 'scott.mckibben@matterhornvp.com', aum: 140, strategy: 'Real estate — value-add industrial, retail, office, multifamily', geography: 'Chicago, IL', stage: 'cold', priority: 'medium', notes: 'Emerging RE sponsor, SPV structure.'},
+            {id: '018', firm: 'Pearlmark Real Estate', contact: 'Doug Lyons', title: 'Managing Principal', email: 'dlyons@pearlmark.com', aum: 6000, strategy: 'Real estate — middle-market commercial equity & debt', geography: 'Chicago, IL', stage: 'cold', priority: 'high', notes: 'Middle-market CRE specialist with 15+ programs.'},
+            {id: '019', firm: 'Kayne Anderson Real Estate', contact: 'Al Rabil', title: 'CEO, Kayne Anderson', email: 'arabil@kayneanderson.com', aum: 31700, strategy: 'Real estate — medical office, seniors housing, student housing', geography: 'Los Angeles, CA', stage: 'cold', priority: 'medium', notes: 'Major alternative asset manager.'},
+            {id: '020', firm: 'Shore Capital Partners', contact: 'Justin Ishbia', title: 'Founder & Managing Partner', email: 'jishbia@shorecp.com', aum: 14000, strategy: 'Lower middle market PE — healthcare, food & beverage, business services', geography: 'Chicago, IL / Nashville, TN', stage: 'cold', priority: 'high', notes: 'Explosive growth to $14B+ AUM.'},
+            {id: '021', firm: 'Stellus Capital Management', contact: 'Robert T. Ladd', title: 'Managing Partner & CEO', email: 'rladd@stelluscapital.com', aum: 3800, strategy: 'Lower middle market direct lending / private credit', geography: 'Houston, TX', stage: 'cold', priority: 'medium', notes: 'Houston-based direct lender.'},
+            {id: '022', firm: 'Cohere Capital Partners', contact: 'Nik Shah', title: 'Co-Founder', email: 'nshah@coherecapital.com', aum: 215, strategy: 'Lower middle market PE — tech-enabled services', geography: 'Boston, MA', stage: 'cold', priority: 'high', notes: 'Recently closed Fund II with TPG partnership.'},
+            {id: '023', firm: 'Frontenac Company', contact: 'Walter Florence', title: 'Senior Partner', email: 'wflorence@frontenac.com', aum: 3800, strategy: 'Lower middle market buyouts — consumer, industrial, services', geography: 'Chicago, IL', stage: 'cold', priority: 'high', notes: '55-year track record, TOP 50 PE Firms.'},
+            {id: '024', firm: 'Ridgemont Equity Partners', contact: 'Rob Edwards', title: 'Managing Partner', email: 'redwards@ridgemontep.com', aum: 11000, strategy: 'Middle market buyouts and growth', geography: 'Charlotte, NC', stage: 'cold', priority: 'high', notes: 'Large recent fund at $3.975B.'},
+            {id: '025', firm: 'Trive Capital', contact: 'Conner Searcy', title: 'Founder & Managing Partner', email: 'csearcy@trivecapital.com', aum: 4000, strategy: 'Middle market flexible equity and debt', geography: 'Dallas, TX', stage: 'cold', priority: 'high', notes: 'Founded 2012, rapid growth.'},
+            {id: '026', firm: 'Bow River Capital', contact: 'Blair Richardson', title: 'Founder & CEO', email: 'brichardson@bowrivercapital.com', aum: 3600, strategy: 'Lower middle market — PE, credit, real estate, software', geography: 'Denver, CO', stage: 'cold', priority: 'high', notes: 'Employee-owned; six investment platforms.'},
+            {id: '027', firm: 'Pamlico Capital', contact: 'Scott Perper', title: 'Head of Pamlico', email: 'sperper@pamlicocapital.com', aum: 4500, strategy: 'Growth equity and buyouts — communications, healthcare IT, software', geography: 'Charlotte, NC', stage: 'cold', priority: 'high', notes: 'Fund VI oversubscribed at $1.75B hard cap.'},
+            {id: '028', firm: 'CORE Industrial Partners', contact: 'John May', title: 'Managing Partner', email: 'info@coreipfund.com', aum: 1580, strategy: 'Lower middle market — manufacturing, industrial tech', geography: 'Chicago, IL', stage: 'cold', priority: 'high', notes: 'Specialized industrial focus.'},
+            {id: '029', firm: 'Rockwood Equity Partners', contact: 'Brett Keith', title: 'Managing Partner', email: 'bkeith@rockwoodequity.com', aum: 500, strategy: 'LMM B2B — manufacturing, distribution, services', geography: 'Cleveland, OH / Denver, CO / New York, NY', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '030', firm: 'WestView Capital Partners', contact: 'Mark Phelan', title: 'Managing Partner', email: 'mphelan@wvcapital.com', aum: 2700, strategy: 'Mid-market growth equity and buyouts', geography: 'Boston, MA', stage: 'cold', priority: 'high', notes: ''},
+            {id: '031', firm: 'SharpVue Capital', contact: 'Lee Roberts', title: 'Principal Owner', email: 'lroberts@sharpvuecapital.com', aum: 354, strategy: 'LMM debt and equity — private credit, RE, PE', geography: 'Raleigh, NC', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '032', firm: 'Endeavour Capital', contact: 'David Muldoon', title: 'Managing Director', email: 'dmuldoon@endeavour.com', aum: 2130, strategy: 'LMM — business services, food, healthcare, manufacturing', geography: 'Portland, OR', stage: 'cold', priority: 'high', notes: ''},
+            {id: '033', firm: 'Whistler Capital Partners', contact: 'Geoffrey Clark', title: 'Managing Member', email: 'gclark@whistlercapital.com', aum: 1000, strategy: 'Growth equity — healthcare and tech-enabled services', geography: 'Nashville, TN', stage: 'cold', priority: 'high', notes: ''},
+            {id: '034', firm: 'Palm Beach Capital', contact: 'Shaun McGruder', title: 'Managing Partner & Co-Founder', email: 'smcgruder@pbcap.com', aum: 500, strategy: 'LMM buyouts — healthcare, logistics, business services', geography: 'Palm Beach, FL', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '035', firm: 'Spell Capital Partners', contact: 'David Spell', title: 'Founder', email: 'dspell@spellcapital.com', aum: 400, strategy: 'PE and mezzanine capital — middle market', geography: 'Minneapolis, MN', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '036', firm: 'Midwest Growth Partners', contact: 'John Mickelson', title: 'Managing Partner', email: 'jmickelson@mgpfund.com', aum: 325, strategy: 'Growth equity — manufacturing, food & agriculture', geography: 'Des Moines, IA', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '037', firm: 'Keswick Partners', contact: 'Managing Partners', title: 'Managing Partners', email: 'info@keswickpartners.com', aum: 100, strategy: 'LMM — niche manufacturing, distribution', geography: 'Tampa, FL / Charlotte, NC', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '038', firm: 'Origin Investments', contact: 'David Scherer', title: 'Co-CEO', email: 'investorrelations@origininvestments.com', aum: 3300, strategy: 'RE — value-add multifamily', geography: 'Chicago, IL', stage: 'cold', priority: 'high', notes: ''},
+            {id: '039', firm: 'Ashcroft Capital', contact: 'Frank Roessler', title: 'CEO', email: 'frank@ashcroftcapital.com', aum: 3500, strategy: 'RE — value-add multifamily, Class A apartments', geography: 'New York, NY', stage: 'cold', priority: 'high', notes: ''},
+            {id: '040', firm: 'BAM Capital', contact: 'Ivan Barratt', title: 'Founder & CEO', email: 'ivan@thebamcompanies.com', aum: 593, strategy: 'RE — value-add multifamily, Midwest', geography: 'Carmel, IN', stage: 'cold', priority: 'high', notes: ''},
+            {id: '041', firm: 'Griffis Residential', contact: 'David Birnbaum', title: 'CEO', email: 'david.birnbaum@griffisresidential.com', aum: 3600, strategy: 'RE — value-add multifamily in innovation hubs', geography: 'Denver, CO', stage: 'cold', priority: 'high', notes: ''},
+            {id: '042', firm: 'FPA Multifamily', contact: 'Greg Fowler', title: 'Managing Partner', email: 'gfowler@fpamf.com', aum: 5000, strategy: 'RE — value-add and core-plus multifamily', geography: 'San Francisco, CA', stage: 'cold', priority: 'high', notes: ''},
+            {id: '043', firm: 'Argosy Real Estate Partners', contact: 'Kirk Helgeson', title: 'Managing Director', email: 'arepir@argosyrep.com', aum: 4000, strategy: 'RE — opportunistic, core-plus, Opportunity Zone', geography: 'Philadelphia, PA', stage: 'cold', priority: 'high', notes: ''},
+            {id: '044', firm: 'Eagle Property Capital', contact: 'Gerardo Mahuad', title: 'CEO', email: 'gmahuad@eaglepropertycapital.com', aum: 643, strategy: 'RE — vertically integrated value-add multifamily', geography: 'Miami, FL', stage: 'cold', priority: 'high', notes: ''},
+            {id: '045', firm: 'CEP Multifamily', contact: 'Jessica Disman', title: 'Director, Capital Markets', email: 'jessica.disman@cepmultifamily.com', aum: 400, strategy: 'RE — core-plus, value-add multifamily', geography: 'Everett, WA', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '046', firm: 'Grubb Properties', contact: 'Clay Grubb', title: 'CEO', email: 'cgrubb@grubbproperties.com', aum: 1300, strategy: 'RE — value-add office conversion, mixed-use', geography: 'Charlotte, NC', stage: 'cold', priority: 'high', notes: ''},
+            {id: '047', firm: 'Trion Properties', contact: 'Max Sharkansky', title: 'Managing Partner', email: 'contact@trionproperties.com', aum: 650, strategy: 'RE — value-add multifamily; 25%+ avg IRR', geography: 'West Hollywood, CA', stage: 'cold', priority: 'high', notes: ''},
+            {id: '048', firm: 'Canyon View Capital', contact: 'Justin Turk', title: 'Managing Partner', email: 'investorrelations@canyonviewcapital.com', aum: 1000, strategy: 'RE — multifamily value-add, Midwest', geography: 'Santa Cruz, CA', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '049', firm: 'PPR Capital Management', contact: 'Dave Zukerman', title: 'CEO', email: 'info@pprcapitalmgmt.com', aum: 855, strategy: 'RE — diversified multifamily and commercial', geography: 'Wayne, PA', stage: 'cold', priority: 'medium', notes: ''},
+            {id: '050', firm: 'Caliber', contact: 'Chris Loeffler', title: 'CEO', email: 'invest@caliberfunds.co', aum: 2900, strategy: 'RE — value-add multifamily, hospitality, industrial', geography: 'Scottsdale, AZ', stage: 'cold', priority: 'high', notes: ''},
+            {id: '051', firm: 'Mill Creek Residential', contact: 'Sam Simone', title: 'EVP, Investment Management', email: 'ssimone@millcreekplaces.com', aum: 11200, strategy: 'RE — value-add multifamily, SFR development', geography: 'Boca Raton, FL', stage: 'cold', priority: 'high', notes: ''},
+            {id: '052', firm: 'Covenant Capital Group', contact: 'Managing Partners', title: 'Managing Partners', email: 'info@covenantcg.com', aum: 860, strategy: 'RE — value-add multifamily apartments', geography: 'Nashville, TN', stage: 'cold', priority: 'high', notes: ''},
+            {id: '053', firm: 'Thompson Thrift', contact: 'Paul Quigg', title: 'Chief Investment Officer', email: 'pquigg@thompsonthrift.com', aum: 222, strategy: 'RE — ground-up multifamily development', geography: 'Terre Haute, IN', stage: 'cold', priority: 'high', notes: ''},
+            {id: '054', firm: 'Riverlake Partners', contact: 'Nick Giustina', title: 'Managing Partner', email: 'ngiustina@riverlakepartners.com', aum: 300, strategy: 'LMM control buyouts — manufacturing, distribution', geography: 'Portland, OR', stage: 'cold', priority: 'medium', notes: ''}
+        ];
 
-</div>
+        // TOP 20 HIGH PRIORITY FOR EMAILS
+        const top20HighPriority = [
+            'Shore Capital Partners',
+            'Ridgemont Equity Partners',
+            'Mill Creek Residential',
+            'Wynnchurch Capital',
+            'LLR Partners',
+            'Pearlmark Real Estate',
+            'FPA Multifamily',
+            'Pamlico Capital',
+            'MiddleGround Capital',
+            'Trive Capital',
+            'Argosy Real Estate Partners',
+            'Frontenac Company',
+            'Bow River Capital',
+            'Griffis Residential',
+            'Ashcroft Capital',
+            'Gauge Capital',
+            'Origin Investments',
+            'Caliber',
+            'WestView Capital Partners',
+            'Plexus Capital'
+        ];
 
-<footer>HMG Operations Harness · Generated from live repo data · March 18, 2026 at 09:14 PM</footer>
+        // LAW FIRMS DATA
+        const lawFirms = [
+            {id: 1, firm: 'Foley & Lardner LLP', contact: 'Andrew Kurzon', title: 'Co-Chair, Fund Formation', email: 'akurzon@foley.com', location: 'Boston', battleReady: true},
+            {id: 2, firm: 'Foley & Lardner LLP', contact: 'Stephen Meli', title: 'Co-Chair, Fund Formation', email: 'smeli@foley.com', location: 'Boston', battleReady: true},
+            {id: 3, firm: 'Foley & Lardner LLP', contact: 'Andrew Wronski', title: 'Managing Partner', email: 'awronski@foley.com', location: 'Milwaukee', battleReady: true},
+            {id: 4, firm: 'Kirkland & Ellis LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Chicago', battleReady: false},
+            {id: 5, firm: 'Sidley Austin LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Chicago', battleReady: false},
+            {id: 6, firm: 'Ropes & Gray LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Boston', battleReady: false},
+            {id: 7, firm: 'Simpson Thacher & Bartlett LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 8, firm: 'Debevoise & Plimpton LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 9, firm: 'Proskauer Rose LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 10, firm: 'Goodwin Procter LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Boston', battleReady: false},
+            {id: 11, firm: 'Latham & Watkins LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 12, firm: 'Paul Hastings LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 13, firm: 'Dechert LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Philadelphia', battleReady: false},
+            {id: 14, firm: 'Willkie Farr & Gallagher LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 15, firm: 'Morgan Lewis & Bockius LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Philadelphia', battleReady: false},
+            {id: 16, firm: 'Schulte Roth & Zabel LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 17, firm: 'Akin Gump Strauss Hauer & Feld LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 18, firm: 'Fried Frank Harris Shriver & Jacobson LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 19, firm: 'Cleary Gottlieb Steen & Hamilton LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 20, firm: 'Davis Polk & Wardwell LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 21, firm: 'Weil Gotshal & Manges LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 22, firm: 'Gibson Dunn & Crutcher LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'New York', battleReady: false},
+            {id: 23, firm: 'King & Spalding LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Atlanta', battleReady: false},
+            {id: 24, firm: 'Winston & Strawn LLP', contact: 'General Contact', title: 'Fund Formation', email: 'N/A', location: 'Chicago', battleReady: false}
+        ];
 
+        // CALCULATIONS
+        function calculateQuietBleed(aum) {
+            const idleCapital = aum * 0.20;
+            const annualBleed = idleCapital * 0.0373;
+            const monthlyBleed = annualBleed / 12;
+            const netGainWithHmg = idleCapital * 0.0323;
+            return { idleCapital, annualBleed, monthlyBleed, netGainWithHmg };
+        }
+
+        function formatCurrency(value) {
+            if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(1) + 'B';
+            }
+            return '$' + value.toFixed(0) + 'M';
+        }
+
+        function formatCurrencyDetailed(value) {
+            if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(2) + 'B';
+            }
+            return '$' + value.toFixed(1) + 'M';
+        }
+
+        function formatFundSize(aumM) {
+            if (aumM >= 1000) {
+                const b = aumM / 1000;
+                return '$' + (b % 1 === 0 ? b.toFixed(0) : b.toFixed(1)) + 'B';
+            }
+            return '$' + aumM + 'M';
+        }
+
+        // GENERATE EMAIL TEMPLATE
+        function generateEmail(prospect) {
+            const firstName = prospect.contact.split(' ')[0];
+            const bleed = calculateQuietBleed(prospect.aum);
+
+            const subject = `The line item ${prospect.firm} isn't tracking`;
+
+            const body = `${firstName},
+
+There's a cost embedded in every mid-market fund that almost nobody quantifies: the yield gap on idle capital.
+
+Between committed-but-uncalled capital, deployment-period cash, post-exit liquidity, and inter-fund flows, the average fund has 15–25% of AUM sitting idle on any given day. On a ${formatFundSize(prospect.aum)} program, that's roughly ${formatCurrencyDetailed(bleed.idleCapital)}.
+
+Most of that capital earns 10–20 basis points in a custodian sweep account. An optimized treasury allocation — government money markets, T-bill ladders, ultrashort investment-grade instruments — nets 3.43% after fees. Same-day liquidity. Principal-protected. FDIC-optimized.
+
+The annual gap on ${formatCurrencyDetailed(bleed.idleCapital)}: approximately ${formatCurrencyDetailed(bleed.annualBleed)}.
+
+That's not a rounding error. Over a fund's life, the cumulative foregone yield on idle capital runs into the millions — capital your LPs never see because it was quietly transferred to your custodian's balance sheet.
+
+Blackstone runs a dedicated Global Treasury division to capture this. KKR has Global Atlantic. Apollo manufactures its own instruments. They don't treat idle capital as dead weight. Mid-market sponsors haven't had the infrastructure to do the same — until now.
+
+We built that infrastructure. It runs under your brand through a Charles Schwab portal, managed by an SEC-registered RIA under a fiduciary standard. Your LPs see ${prospect.firm}, not us.
+
+Worth a conversation if you're open to seeing the numbers on your specific fund structure.
+
+Daniel Fink
+Managing Director, Hilltop Management Group
+dan@hilltopmanagementgroup.com`;
+
+            return { subject, body };
+        }
+
+        // RENDER PROSPECTS TABLE
+        function renderProspectsTable() {
+            const tbody = document.getElementById('prospects-tbody');
+            tbody.innerHTML = '';
+
+            prospects.forEach(prospect => {
+                const bleed = calculateQuietBleed(prospect.aum);
+                const isTop20 = top20HighPriority.includes(prospect.firm);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><button class="expand-btn" onclick="toggleExpand('${prospect.id}')">▼</button></td>
+                    <td><strong>${prospect.firm}</strong></td>
+                    <td>${prospect.contact}<br><span style="font-size: 0.85rem; color: var(--dark-gray);">${prospect.title}</span></td>
+                    <td>${formatCurrency(prospect.aum)}</td>
+                    <td><span class="badge badge-${prospect.stage}">${prospect.stage}</span></td>
+                    <td><span class="priority-${prospect.priority}">${prospect.priority}</span></td>
+                    <td><button class="btn btn-primary" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;" onclick="copyToClipboard('${prospect.email}', this)">Copy Email</button></td>
+                `;
+                tbody.appendChild(row);
+
+                // EXPANDED ROW
+                const expandedRow = document.createElement('tr');
+                expandedRow.id = `expanded-${prospect.id}`;
+                expandedRow.className = 'expanded-row';
+                expandedRow.innerHTML = `
+                    <td colspan="7">
+                        <div class="expanded-content">
+                            <div class="detail-section">
+                                <h3>Contact Information</h3>
+                                <div class="detail-row">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${prospect.email}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Geography</div>
+                                    <div class="detail-value">${prospect.geography}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Strategy</div>
+                                    <div class="detail-value">${prospect.strategy}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Notes</div>
+                                    <div class="detail-value">${prospect.notes || 'N/A'}</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Quiet Bleed Analysis</h3>
+                                <div class="bleed-highlight">
+                                    <div class="bleed-label">Annual Yield Gap (Cost of Inaction)</div>
+                                    <div class="bleed-value">${formatCurrencyDetailed(bleed.annualBleed)}</div>
+                                    <div class="bleed-subtext">
+                                        Idle Capital: ${formatCurrencyDetailed(bleed.idleCapital)} | Monthly: ${formatCurrencyDetailed(bleed.monthlyBleed)}
+                                    </div>
+                                    <div class="bleed-subtext" style="margin-top: 0.75rem;">
+                                        Net Gain with HMG: ${formatCurrencyDetailed(bleed.netGainWithHmg)} per year
+                                    </div>
+                                </div>
+                            </div>
+
+                            ${isTop20 ? `
+                            <div class="detail-section">
+                                <h3>Cold Outreach Email 1: "The Quiet Bleed"</h3>
+                                ${generateEmailHTML(prospect)}
+                            </div>
+                            ` : '<div style="padding: 1rem; background: #f5f5f5; border-radius: 4px; font-size: 0.9rem; color: var(--dark-gray);">Email templates available for top 20 high-priority prospects by AUM.</div>'}
+
+                            <div class="action-buttons">
+                                <button class="btn btn-copy" onclick="copyToClipboard('${prospect.email}', this)">📋 Copy Email Address</button>
+                                <a href="mailto:${prospect.email}?subject=HMG%20Treasury%20Optimization&body=Hi%20${encodeURIComponent(prospect.contact.split(' ')[0])},%0A%0AWould%20love%20to%20discuss%20optimizing%20your%20idle%20capital%20yield.%0A%0ABest,%0ADaniel" class="btn btn-secondary">✉️ Open Email Client</a>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(expandedRow);
+            });
+
+            updateStats();
+            applyFilters();
+        }
+
+        function generateEmailHTML(prospect) {
+            const email = generateEmail(prospect);
+            const bodyForCopy = email.subject + "\n\n" + email.body;
+            return `
+                <div class="email-box">
+                    <div class="email-subject">Subject: ${email.subject}</div>
+                    <div class="email-body">${email.body}</div>
+                </div>
+                <button class="btn btn-primary" onclick="copyFullEmail(\`${email.subject}\`, \`${email.body}\`, this)" style="width: 100%; margin-top: 0.75rem;">📋 Copy Full Email</button>
+            `;
+        }
+
+        function copyFullEmail(subject, body, button) {
+            const fullText = subject + "\n\n" + body;
+            navigator.clipboard.writeText(fullText).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // EXPAND/COLLAPSE
+        function toggleExpand(id) {
+            const expandedRow = document.getElementById(`expanded-${id}`);
+            const btn = event.target;
+
+            if (expandedRow.classList.contains('open')) {
+                expandedRow.classList.remove('open');
+                btn.classList.remove('open');
+            } else {
+                expandedRow.classList.add('open');
+                btn.classList.add('open');
+            }
+        }
+
+        // COPY TO CLIPBOARD
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // UPDATE STATS
+        function updateStats() {
+            const totalAum = prospects.reduce((sum, p) => sum + p.aum, 0);
+            const totalIdle = totalAum * 0.20;
+            const totalBleed = totalIdle * 0.0373;
+
+            document.getElementById('stat-aum').textContent = formatCurrency(totalAum);
+            document.getElementById('stat-idle').textContent = formatCurrency(totalIdle);
+            document.getElementById('stat-bleed').textContent = formatCurrencyDetailed(totalBleed);
+        }
+
+        // FILTERS
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const stageFilter = document.getElementById('stage-filter').value;
+
+            const rows = document.querySelectorAll('#prospects-tbody > tr:not(.expanded-row)');
+            rows.forEach(row => {
+                const firm = row.cells[1].textContent.toLowerCase();
+                const contact = row.cells[2].textContent.toLowerCase();
+                const prospect = prospects.find(p => p.firm === row.cells[1].textContent);
+
+                let visible = true;
+
+                if (searchTerm && !firm.includes(searchTerm) && !contact.includes(searchTerm) && !prospect.email.toLowerCase().includes(searchTerm)) {
+                    visible = false;
+                }
+
+                if (priorityFilter && prospect.priority !== priorityFilter) {
+                    visible = false;
+                }
+
+                if (stageFilter && prospect.stage !== stageFilter) {
+                    visible = false;
+                }
+
+                row.style.display = visible ? '' : 'none';
+                const expandedRow = document.getElementById(`expanded-${prospect.id}`);
+                expandedRow.style.display = visible ? '' : 'none';
+            });
+        }
+
+        // LAW FIRMS RENDER
+        function renderLawFirms() {
+            const grid = document.getElementById('law-firms-grid');
+            grid.innerHTML = '';
+
+            lawFirms.forEach(firm => {
+                const card = document.createElement('div');
+                card.className = `law-firm-card ${firm.battleReady ? 'battle-ready' : ''}`;
+                card.innerHTML = `
+                    <div class="firm-name">${firm.firm}</div>
+                    <div class="partner-name">${firm.contact}</div>
+                    <div class="partner-title">${firm.title}</div>
+                    ${firm.email !== 'N/A' ? `<div class="partner-email">${firm.email}</div>` : ''}
+                    <div class="firm-location">${firm.location}</div>
+                    ${firm.battleReady ? '<span class="battle-badge">🎯 Battle Plan Ready</span>' : ''}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // TAB SWITCHING
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // SEARCH & FILTER LISTENERS
+        document.getElementById('search-input').addEventListener('input', applyFilters);
+        document.getElementById('priority-filter').addEventListener('change', applyFilters);
+        document.getElementById('stage-filter').addEventListener('change', applyFilters);
+
+        // INIT
+        renderProspectsTable();
+        renderLawFirms();
+        updateStats();
+    </script>
 </body>
 </html>
