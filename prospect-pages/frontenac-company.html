@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontenac Company — Prepared by HMG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black:  #0A0A0A;
+      --white:  #FFFFFF;
+      --gold:   #C5A47E;
+      --gold-light: #D4BC9A;
+      --gold-dark:  #A0825A;
+      --gray-1: #1A1A1A;
+      --gray-2: #2A2A2A;
+      --gray-3: #444;
+      --gray-4: #888;
+      --gray-5: #BBB;
+      --gray-6: #E8E8E8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── HEADER ─────────────────────────────────── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(197,164,126,0.15);
+    }
+
+    .hmg-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
+    .hmg-logo span { color: var(--gold); }
+
+    .confidential-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(197,164,126,0.45);
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
+    }
+
+    /* ─── HERO ───────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 2rem 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(197,164,126,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--gray-5);
+      margin-bottom: 3rem;
+    }
+
+    .hero-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 3rem;
+      opacity: 0.6;
+    }
+
+    .hero-prepared {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray-4);
+    }
+
+    /* ─── SECTION WRAPPER ────────────────────────── */
+    section {
+      padding: 100px 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    .section-body {
+      font-size: 1rem;
+      color: var(--gray-5);
+      max-width: 680px;
+      line-height: 1.8;
+    }
+
+    .full-bleed {
+      background: var(--gray-1);
+      max-width: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .full-bleed > .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 2rem;
+    }
+
+    /* ─── COUNTER HERO ───────────────────────────── */
+    .counter-section {
+      background: var(--gray-1);
+      max-width: none;
+      padding: 0;
+    }
+
+    .counter-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 2rem;
+      text-align: center;
+    }
+
+    .counter-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+    }
+
+    .counter-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .counter-unit {
+      color: var(--gold);
+    }
+
+    .counter-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      font-style: italic;
+      color: var(--gray-4);
+      margin-bottom: 2.5rem;
+    }
+
+    .counter-note {
+      font-size: 0.8rem;
+      color: var(--gray-3);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── MATH TABLE ─────────────────────────────── */
+    .math-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: rgba(197,164,126,0.12);
+      border: 1px solid rgba(197,164,126,0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 640px) {
+      .math-grid { grid-template-columns: 1fr; }
+    }
+
+    .math-cell {
+      background: var(--black);
+      padding: 2rem 2.5rem;
+    }
+
+    .math-cell.highlight {
+      background: var(--gray-1);
+    }
+
+    .math-cell.accent {
+      background: rgba(197,164,126,0.08);
+      border: 1px solid rgba(197,164,126,0.2);
+    }
+
+    .math-cell-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray-4);
+      margin-bottom: 0.75rem;
+    }
+
+    .math-cell-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    .math-cell-value.gold { color: var(--gold); }
+    .math-cell-value.red  { color: #C5504A; }
+
+    .math-cell-sub {
+      font-size: 0.78rem;
+      color: var(--gray-4);
+      margin-top: 0.4rem;
+    }
+
+    .math-arrow {
+      grid-column: 1 / -1;
+      background: var(--gray-1);
+      padding: 1rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-4);
+    }
+
+    .math-arrow::before, .math-arrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(197,164,126,0.15);
+    }
+
+    /* ─── QUOTE BLOCK ────────────────────────────── */
+    .quote-block {
+      border-left: 2px solid var(--gold);
+      padding: 2rem 2.5rem;
+      background: var(--gray-1);
+      border-radius: 0 4px 4px 0;
+      margin: 3rem 0;
+    }
+
+    .quote-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .quote-source {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ─── PLATFORM FEATURES ──────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1px;
+      background: rgba(197,164,126,0.1);
+      border: 1px solid rgba(197,164,126,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--black);
+      padding: 2.5rem 2rem;
+    }
+
+    .feature-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(197,164,126,0.25);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 0.6rem;
+    }
+
+    .feature-body {
+      font-size: 0.85rem;
+      color: var(--gray-4);
+      line-height: 1.7;
+    }
+
+    /* ─── TIMELINE ───────────────────────────────── */
+    .timeline {
+      margin-top: 3rem;
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2.5rem;
+      padding-left: 2rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 0.45rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid var(--black);
+      box-shadow: 0 0 0 1px var(--gold);
+    }
+
+    .timeline-week {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-body {
+      font-size: 0.82rem;
+      color: var(--gray-4);
+      line-height: 1.6;
+    }
+
+    /* ─── PEER COMPARISON ────────────────────────── */
+    .peer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      gap: 1rem;
+    }
+
+    .peer-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--white);
+      min-width: 160px;
+    }
+
+    .peer-bar-wrap {
+      flex: 1;
+      height: 4px;
+      background: var(--gray-2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .peer-bar {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--gold);
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .peer-label {
+      font-size: 0.78rem;
+      color: var(--gray-4);
+      text-align: right;
+      min-width: 120px;
+    }
+
+    /* ─── CTA / CONTACT ──────────────────────────── */
+    .contact-section {
+      background: var(--gray-1);
+      max-width: none;
+      padding: 0;
+    }
+
+    .contact-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    @media (max-width: 720px) {
+      .contact-inner { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    .contact-left .contact-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .contact-left .contact-body {
+      font-size: 0.9rem;
+      color: var(--gray-4);
+      line-height: 1.8;
+    }
+
+    .contact-card {
+      background: var(--black);
+      border: 1px solid rgba(197,164,126,0.2);
+      border-radius: 4px;
+      padding: 2.5rem;
+    }
+
+    .contact-card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .contact-card-title {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+      font-size: 0.88rem;
+      color: var(--gray-5);
+    }
+
+    .contact-detail-icon {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(197,164,126,0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      color: var(--gold);
+    }
+
+    .contact-email {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .contact-email:hover { text-decoration: underline; }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-4);
+      margin-bottom: 1rem;
+    }
+
+    .footer-logo span { color: var(--gold); }
+
+    .footer-disclaimer {
+      font-size: 0.7rem;
+      color: var(--gray-3);
+      line-height: 1.7;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ─── SCROLL REVEAL ──────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ─── SEPARATOR LINE ─────────────────────────── */
+    .gold-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(197,164,126,0.4), transparent);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FIXED HEADER -->
+  <header class="site-header">
+    <div class="hmg-logo">Hilltop<span>MG</span></div>
+    <div class="confidential-badge">Confidential</div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Prepared for Frontenac Company · March 2026</div>
+    <h1 class="hero-title">A Structural Opportunity<br /><em>in Your Idle Capital</em></h1>
+    <p class="hero-subtitle">What your sweep accounts are quietly costing you</p>
+    <div class="hero-divider"></div>
+    <p class="hero-prepared">Prepared by Hilltop Management Group · For the attention of Walter Florence</p>
+  </div>
+
+  <div class="gold-line"></div>
+
+  <!-- THE OPPORTUNITY: ANIMATED COUNTER -->
+  <div class="counter-section">
+    <div class="counter-inner reveal">
+      <div class="counter-label">Annual Quiet Bleed — Frontenac Company</div>
+      <div class="counter-number">
+        <span class="counter-unit">$</span><span id="counter-frontenac" data-target="29336000" data-prefix="$" data-format="M">0</span><span class="counter-unit">M</span>
+      </div>
+      <p class="counter-caption">per year left on the table in sweep accounts</p>
+      <p class="counter-note">Based on estimated $760M idle capital at 3.86% yield gap vs. current sweep rate of 0.39%</p>
+    </div>
+  </div>
+
+  <div class="gold-line"></div>
+
+  <!-- THE MATH -->
+  <section class="reveal">
+    <div class="section-eyebrow">The Mathematics</div>
+    <h2 class="section-title">From <em>$3.8 Billion</em> to<br />a $29.3M Annual Gap</h2>
+    <p class="section-body">The arithmetic is straightforward. The question is why it persists across 350+ deals and 13 active funds.</p>
+
+    <div class="math-grid">
+      <div class="math-cell">
+        <div class="math-cell-label">Total AUM</div>
+        <div class="math-cell-value">$3.8B+</div>
+        <div class="math-cell-sub">Frontenac Company — 13 funds, 55-year track record</div>
+      </div>
+      <div class="math-cell">
+        <div class="math-cell-label">Estimated Idle Capital (20%)</div>
+        <div class="math-cell-value">$760M</div>
+        <div class="math-cell-sub">Dry powder, LP reserves, post-close uninvested capital</div>
+      </div>
+
+      <div class="math-arrow">Current Scenario vs. Optimized</div>
+
+      <div class="math-cell highlight">
+        <div class="math-cell-label">Sweep Account Yield (today)</div>
+        <div class="math-cell-value red">0.39%</div>
+        <div class="math-cell-sub">Custodian default — $2.96M/yr on $760M</div>
+      </div>
+      <div class="math-cell highlight">
+        <div class="math-cell-label">Optimized Treasury Yield</div>
+        <div class="math-cell-value gold">4.25%</div>
+        <div class="math-cell-sub">T-bills, money markets, short-duration — $32.3M/yr on $760M</div>
+      </div>
+
+      <div class="math-arrow">The Gap</div>
+
+      <div class="math-cell accent" style="grid-column: 1 / -1;">
+        <div class="math-cell-label">Annual Yield Gap</div>
+        <div class="math-cell-value gold">$29.3M / year</div>
+        <div class="math-cell-sub">Net annual gain with HMG platform (after 50bps AUM fee): approximately $26.3M — a 7× return on implementation cost</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-line"></div>
+
+  <!-- INDUSTRY CONTEXT -->
+  <section class="full-bleed">
+    <div class="inner reveal">
+      <div class="section-eyebrow">Industry Context</div>
+      <h2 class="section-title">The Infrastructure<br /><em>Already Exists</em></h2>
+      <p class="section-body" style="margin-bottom: 2rem;">
+        Blackstone, KKR, and Apollo don't leave idle capital in sweep accounts.
+        They operate dedicated treasury functions, capturing the full yield curve on uninvested capital.
+        The institutional infrastructure they use is the same infrastructure HMG deploys —
+        now available to sponsors operating at your scale. After 55 years and 350+ deals, the sophistication
+        of Frontenac's investment discipline extends naturally to capital management.
+      </p>
+
+      <div class="quote-block">
+        <p class="quote-text">"Treasury optimization isn't about complexity — it's about infrastructure. The same discipline that identifies great deals should optimize the capital waiting for them."</p>
+        <div class="quote-source">Hilltop Management Group · Capital Infrastructure Thesis</div>
+      </div>
+
+      <div style="margin-top: 2.5rem;">
+        <div class="section-eyebrow" style="margin-bottom: 1.5rem;">Where Peers Stand</div>
+
+        <div class="peer-row">
+          <div class="peer-name">Blackstone / KKR</div>
+          <div class="peer-bar-wrap"><div class="peer-bar" style="width: 0%" data-width="100%"></div></div>
+          <div class="peer-label">Fully optimized</div>
+        </div>
+        <div class="peer-row">
+          <div class="peer-name">Apollo / Ares</div>
+          <div class="peer-bar-wrap"><div class="peer-bar" style="width: 0%" data-width="95%"></div></div>
+          <div class="peer-label">Fully optimized</div>
+        </div>
+        <div class="peer-row">
+          <div class="peer-name">Mid-market PE ($2B–$5B)</div>
+          <div class="peer-bar-wrap"><div class="peer-bar" style="width: 0%" data-width="32%"></div></div>
+          <div class="peer-label">Mostly unoptimized</div>
+        </div>
+        <div class="peer-row" style="border-bottom: none;">
+          <div class="peer-name" style="color: var(--gold);">Frontenac</div>
+          <div class="peer-bar-wrap"><div class="peer-bar" style="width: 0%; background: rgba(197,164,126,0.35);" data-width="8%"></div></div>
+          <div class="peer-label" style="color: var(--gold);">Current state</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-line"></div>
+
+  <!-- THE PLATFORM -->
+  <section class="reveal">
+    <div class="section-eyebrow">The Platform</div>
+    <h2 class="section-title">White-Label. Institutional.<br /><em>Built for Your LPs.</em></h2>
+    <p class="section-body">
+      HMG deploys a Charles Schwab investor portal under your brand, managed by an SEC-registered RIA partner.
+      Your LPs see your name. Your investment committee sees optimized yields.
+      Your team sees zero operational overhead.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-number">01</div>
+        <div class="feature-title">White-Label Portal</div>
+        <div class="feature-body">Schwab institutional infrastructure branded to Frontenac. LPs interact with your portal, your identity — HMG operates behind the scenes.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-number">02</div>
+        <div class="feature-title">SEC-Registered RIA</div>
+        <div class="feature-body">All treasury management executed through a registered investment adviser. Full fiduciary standard. Audit-ready documentation included.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-number">03</div>
+        <div class="feature-title">Same-Day Liquidity</div>
+        <div class="feature-body">No capital lockup. T-bill ladders and money market positions structured for daily availability. Capital deploys to deals on your timeline.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-number">04</div>
+        <div class="feature-title">No LPA Amendment</div>
+        <div class="feature-body">Structured to work within existing limited partnership agreements. No investor consent solicitation required. No fund modification.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-number">05</div>
+        <div class="feature-title">10bps Throughput Fee</div>
+        <div class="feature-body">Simple, transparent fee structure: 10bps on capital flows plus 50bps AUM. No performance fees. No hidden custodial spreads.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-number">06</div>
+        <div class="feature-title">Multi-Fund Architecture</div>
+        <div class="feature-body">One platform, all vintages. All 13 Frontenac funds unified under a single treasury infrastructure with consistent yield reporting.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-line"></div>
+
+  <!-- IMPLEMENTATION -->
+  <section class="full-bleed">
+    <div class="inner reveal">
+      <div class="section-eyebrow">Implementation</div>
+      <h2 class="section-title">Operational in<br /><em>4–8 Weeks</em></h2>
+      <p class="section-body" style="margin-bottom: 0;">
+        No systems integration. No operational disruption. A dedicated HMG implementation team manages the full process.
+      </p>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-week">Week 1–2</div>
+          <div class="timeline-title">Discovery & Structure</div>
+          <div class="timeline-body">Review fund documents, LP agreements, and existing custodial arrangements across all 13 Frontenac vehicles. Confirm eligible capital pools and multi-fund architecture requirements.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-week">Week 2–4</div>
+          <div class="timeline-title">Portal Configuration</div>
+          <div class="timeline-body">Schwab institutional account establishment. White-label portal setup with Frontenac branding. RIA onboarding documentation and fund-specific consolidation.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-week">Week 4–6</div>
+          <div class="timeline-title">LP Onboarding (Optional)</div>
+          <div class="timeline-body">If LP-facing portal is activated: coordinated outreach, KYC documentation, and account credentialing across all fund vintage participants. HMG handles the process end-to-end.</div>
+        </div>
+        <div class="timeline-item" style="margin-bottom: 0;">
+          <div class="timeline-week">Week 6–8</div>
+          <div class="timeline-title">Capital Deployment</div>
+          <div class="timeline-body">Idle capital transferred to optimized allocations across all funds. Live yield reporting begins. Frontenac treasury infrastructure is fully operational.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-line"></div>
+
+  <!-- CONTACT -->
+  <div class="contact-section">
+    <div class="contact-inner">
+      <div class="contact-left reveal">
+        <div class="section-eyebrow">Next Step</div>
+        <h2 class="contact-title">A 30-Minute Conversation to Confirm the Numbers</h2>
+        <p class="contact-body">
+          The $29.3M figure is an estimate based on publicly reported AUM and industry-standard idle capital ratios.
+          A brief conversation with Frontenac's CFO or investment operations team would let us sharpen that
+          number and confirm whether HMG is the right fit across your multi-fund structure. No commitment required.
+        </p>
+      </div>
+      <div class="reveal">
+        <div class="contact-card">
+          <div class="contact-card-name">Daniel Fink</div>
+          <div class="contact-card-title">Managing Director · Hilltop Management Group</div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">@</div>
+            <a href="mailto:dan@hilltopmanagementgroup.com" class="contact-email">dan@hilltopmanagementgroup.com</a>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">W</div>
+            <span>hilltopmanagementgroup.com</span>
+          </div>
+          <div class="contact-detail" style="margin-top: 1.5rem; margin-bottom: 0; font-size: 0.75rem; color: var(--gray-3);">
+            <div class="contact-detail-icon" style="font-size: 0.6rem;">HMG</div>
+            <span>Milwaukee / Brookfield, WI — Serving sponsors nationally</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Hilltop<span>MG</span></div>
+    <p class="footer-disclaimer">
+      This document is prepared exclusively for Frontenac Company and is strictly confidential.
+      All yield figures are estimates based on publicly available information and are not guaranteed.
+      Past performance of treasury instruments is not indicative of future results.
+      Hilltop Management Group operates through an SEC-registered RIA partner.
+      This is not an offer to sell or a solicitation of an offer to buy any security.
+      Investment advisory services involve risk, including possible loss of principal.
+    </p>
+  </footer>
+
+  <script>
+    // ─── SCROLL REVEAL ───────────────────────────────────────────────────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // ─── ANIMATED COUNTER ────────────────────────────────────────────────────
+    function animateCounter(el, target, duration = 2200) {
+      const start = performance.now();
+      const update = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const value = Math.round(ease * target / 1e6);
+        el.textContent = value.toFixed(1);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = (target / 1e6).toFixed(1);
+      };
+      requestAnimationFrame(update);
+    }
+
+    const counterEl = document.getElementById('counter-frontenac');
+    const counterObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        counterEl.textContent = '0.0';
+        animateCounter(counterEl, 29336000);
+        counterObserver.disconnect();
+      }
+    }, { threshold: 0.5 });
+    counterObserver.observe(counterEl);
+
+    // ─── PEER BARS ───────────────────────────────────────────────────────────
+    const bars = document.querySelectorAll('.peer-bar');
+    const barObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        bars.forEach(bar => {
+          const w = bar.getAttribute('data-width');
+          setTimeout(() => { bar.style.width = w; }, 200);
+        });
+        barObserver.disconnect();
+      }
+    }, { threshold: 0.4 });
+    if (bars.length) barObserver.observe(bars[0].closest('section') || bars[0].parentElement);
+  </script>
+</body>
+</html>
